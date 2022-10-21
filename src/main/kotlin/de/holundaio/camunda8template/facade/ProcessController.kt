@@ -1,38 +1,30 @@
 package de.holundaio.camunda8template.facade
 
-import io.camunda.zeebe.client.ZeebeClient
-import de.holundaio.camunda8template.ProcessConstants
-import de.holundaio.camunda8template.ProcessVariables
+import de.holundaio.camunda8template.process.BusinessProcess
+import de.holundaio.camunda8template.process.BusinessProcess.Companion.BPMN_PROCESS_ID
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/process")
-class ProcessController(private val zeebe: ZeebeClient) {
+class ProcessController(private val businessProcess: BusinessProcess) {
+
     @PostMapping("/start")
-    fun startProcessInstance(@RequestBody variables: ProcessVariables) {
+    fun startProcessInstance(@RequestBody businessKey: String) {
         LOG.info(
-            "Starting process `" + ProcessConstants.BPMN_PROCESS_ID + "` with variables: " + variables
+            "Starting process `$BPMN_PROCESS_ID` with business key: `$businessKey`"
         )
-        zeebe
-            .newCreateInstanceCommand()
-            .bpmnProcessId(ProcessConstants.BPMN_PROCESS_ID)
-            .latestVersion()
-            .variables(variables)
-            .send()
+        businessProcess.start(businessKey)
     }
 
     @PostMapping("/message/{messageName}/{correlationKey}")
     fun publishMessage(
         @PathVariable messageName: String?,
         @PathVariable correlationKey: String?,
-        @RequestBody variables: ProcessVariables?
+        @RequestBody variables: BusinessProcess.ProcessVariables?
     ) {
         LOG.info(
-            "Publishing message `{}` with correlation key `{}` and variables: {}",
-            messageName,
-            correlationKey,
-            variables
+            "Publishing message `$messageName` with correlation key `$correlationKey` and variables: $variables"
         )
         zeebe
             .newPublishMessageCommand()

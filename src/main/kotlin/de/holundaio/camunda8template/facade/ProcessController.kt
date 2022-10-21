@@ -26,6 +26,7 @@ class ProcessController(private val businessProcess: BusinessProcess) {
         LOG.info(
             "Publishing message `$messageName` with correlation key `$correlationKey` and variables: $variables"
         )
+        // TODO move to BusinessProcess(Instance)
         zeebe
             .newPublishMessageCommand()
             .messageName(messageName)

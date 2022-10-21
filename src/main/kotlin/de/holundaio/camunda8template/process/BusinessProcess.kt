@@ -2,6 +2,8 @@ package de.holundaio.camunda8template.process
 
 import io.camunda.zeebe.client.ZeebeClient
 import org.springframework.stereotype.Component
+import java.util.concurrent.Future
+import java.util.concurrent.FutureTask
 
 @Component
 class BusinessProcess(private val zeebe: ZeebeClient) {
@@ -18,17 +20,17 @@ class BusinessProcess(private val zeebe: ZeebeClient) {
         const val MESSAGE_A = "Message_A"
     }
 
-    suspend fun start(businessKey: String): BusinessProcessInstance {
+    fun start(businessKey: String): Future<BusinessProcessInstance> {
         val zeebeFuture = zeebe
             .newCreateInstanceCommand()
             .bpmnProcessId(BPMN_PROCESS_ID)
             .latestVersion()
             .variables(ProcessVariables(businessKey))
             .send()
-        return BusinessProcessInstance(zeebeFuture.join().processInstanceKey)
+        return FutureTask { BusinessProcessInstance(zeebeFuture.join().processInstanceKey) }
     }
 
-    data class ProcessVariables (
+    data class ProcessVariables(
         val businessKey: String,
         val jobResult: Boolean? = null
     )

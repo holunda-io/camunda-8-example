@@ -1,17 +1,15 @@
 package org.example.camunda.process.solution
 
 import de.holundaio.camunda8template.Camunda8TemplateApplication
-import de.holundaio.camunda8template.ProcessVariables
+import de.holundaio.camunda8template.facade.ProcessController
+import de.holundaio.camunda8template.process.BusinessProcess.FlowNodes.TASK_DO_SOME_BUSINESS_STUFF
+import de.holundaio.camunda8template.process.BusinessProcess.ProcessVariables
+import de.holundaio.camunda8template.service.SomeBusinessService
 import io.camunda.zeebe.process.test.api.ZeebeTestEngine
 import io.camunda.zeebe.process.test.assertions.BpmnAssert
 import io.camunda.zeebe.process.test.inspections.InspectionUtility
 import io.camunda.zeebe.spring.test.ZeebeSpringTest
 import io.camunda.zeebe.spring.test.ZeebeTestThreadSupport
-import de.holundaio.camunda8template.facade.ProcessController
-import de.holundaio.camunda8template.process.BusinessProcess
-import de.holundaio.camunda8template.process.BusinessProcess.FlowNodes.TASK_DO_SOME_BUSINESS_STUFF
-import de.holundaio.camunda8template.process.BusinessProcess.ProcessVariables
-import de.holundaio.camunda8template.service.SomeBusinessService
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito
@@ -41,11 +39,8 @@ class ProcessUnitTest {
         // define mock behavior
         Mockito.`when`(someBusinessService!!.myOperation(ArgumentMatchers.anyString())).thenReturn(true)
 
-        // prepare data
-        val variables = ProcessVariables("23")
-
         // start a process instance
-        processController.startProcessInstance(variables)
+        processController.startProcessInstance("23")
 
         // wait for process to be started
         engine.waitForIdleState(Duration.ofSeconds(1))

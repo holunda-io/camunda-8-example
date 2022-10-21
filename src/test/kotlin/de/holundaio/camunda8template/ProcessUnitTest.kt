@@ -1,12 +1,14 @@
 package org.example.camunda.process.solution
 
+import de.holundaio.camunda8template.Camunda8TemplateApplication
+import de.holundaio.camunda8template.ProcessVariables
 import io.camunda.zeebe.process.test.api.ZeebeTestEngine
 import io.camunda.zeebe.process.test.assertions.BpmnAssert
 import io.camunda.zeebe.process.test.inspections.InspectionUtility
 import io.camunda.zeebe.spring.test.ZeebeSpringTest
 import io.camunda.zeebe.spring.test.ZeebeTestThreadSupport
-import org.example.camunda.process.solution.facade.ProcessController
-import org.example.camunda.process.solution.service.MyService
+import de.holundaio.camunda8template.facade.ProcessController
+import de.holundaio.camunda8template.service.SomeBusinessService
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito
@@ -18,7 +20,7 @@ import java.time.Duration
 /**
  * @see      https://docs.camunda.io/docs/components/best-practices/development/testing-process-definitions/.writing-process-tests-in-java
  */
-@SpringBootTest(classes = [ProcessApplication::class]) // will deploy BPMN & DMN models
+@SpringBootTest(classes = [Camunda8TemplateApplication::class]) // will deploy BPMN & DMN models
 @ZeebeSpringTest
 class ProcessUnitTest {
     @Autowired
@@ -28,15 +30,15 @@ class ProcessUnitTest {
     private val engine: ZeebeTestEngine? = null
 
     @MockBean
-    private val myService: MyService? = null
+    private val someBusinessService: SomeBusinessService? = null
     @Test
     @Throws(Exception::class)
     fun testHappyPath() {
         // define mock behavior
-        Mockito.`when`(myService!!.myOperation(ArgumentMatchers.anyString())).thenReturn(true)
+        Mockito.`when`(someBusinessService!!.myOperation(ArgumentMatchers.anyString())).thenReturn(true)
 
         // prepare data
-        val variables = ProcessVariables().setBusinessKey("23")
+        val variables = ProcessVariables("23")
 
         // start a process instance
         processController!!.startProcessInstance(variables)
@@ -47,17 +49,17 @@ class ProcessUnitTest {
         BpmnAssert.assertThat(processInstance).isStarted
 
         // check that service task has been completed
-        ZeebeTestThreadSupport.waitForProcessInstanceHasPassedElement(processInstance, "Task_InvokeService")
-        Mockito.verify(myService).myOperation("23")
+        ZeebeTestThreadSupport.waitForProcessInstanceHasPassedElement(processInstance, "Task_DoSomeBusinessStuff")
+        Mockito.verify(someBusinessService).myOperation("23")
 
         // check that process is ended with the right result
         ZeebeTestThreadSupport.waitForProcessInstanceCompleted(processInstance)
         BpmnAssert.assertThat(processInstance)
             .isCompleted
-            .hasPassedElement("Task_InvokeService")
-            .hasVariableWithValue("result", true)
+            .hasPassedElement("Task_DoSomeBusinessStuff")
+            .hasVariableWithValue("jobResult", true)
 
         // ensure no other side effects
-        Mockito.verifyNoMoreInteractions(myService)
+        Mockito.verifyNoMoreInteractions(someBusinessService)
     }
 }

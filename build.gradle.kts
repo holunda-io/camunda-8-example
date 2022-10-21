@@ -11,6 +11,9 @@ group = "de.holunda-io"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
+// dependency versions
+val springZeebeVersion = "8.1.1"
+
 repositories {
 	mavenCentral()
 }
@@ -20,7 +23,10 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+	implementation(group = "io.camunda", name = "spring-zeebe-starter", version = springZeebeVersion)
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation(group = "io.camunda", name = "spring-zeebe-test", version = springZeebeVersion)
 }
 
 tasks.withType<KotlinCompile> {

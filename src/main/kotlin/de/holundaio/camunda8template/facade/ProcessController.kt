@@ -1,8 +1,8 @@
-package org.example.camunda.process.solution.facade
+package de.holundaio.camunda8template.facade
 
 import io.camunda.zeebe.client.ZeebeClient
-import org.example.camunda.process.solution.ProcessConstants
-import org.example.camunda.process.solution.ProcessVariables
+import de.holundaio.camunda8template.ProcessConstants
+import de.holundaio.camunda8template.ProcessVariables
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
 

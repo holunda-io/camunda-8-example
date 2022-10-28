@@ -6,33 +6,37 @@ import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/process")
+@RequestMapping("/business-process")
 class ProcessController(private val businessProcess: BusinessProcess) {
 
     @PostMapping("/start")
-    fun startProcessInstance(@RequestBody businessKey: String) {
+    fun startBusinessProcessInstance(@RequestBody businessKey: String) {
         LOG.info(
             "Starting process `$BPMN_PROCESS_ID` with business key: `$businessKey`"
         )
         businessProcess.start(businessKey)
     }
 
-    @PostMapping("/message/{messageName}/{correlationKey}")
-    fun publishMessage(
-        @PathVariable messageName: String?,
-        @PathVariable correlationKey: String?,
-        @RequestBody variables: BusinessProcess.ProcessVariables?
+    @PostMapping("/message/some-business-message/{correlationKey}")
+    fun publishSomeBusinessMessage(
+        @PathVariable correlationKey: String,
+        @RequestBody businessData: String
     ) {
         LOG.info(
-            "Publishing message `$messageName` with correlation key `$correlationKey` and variables: $variables"
+            "Publishing some business message with correlation key `$correlationKey` and data: $businessData"
         )
-        // TODO move to BusinessProcess(Instance)
-        zeebe
-            .newPublishMessageCommand()
-            .messageName(messageName)
-            .correlationKey(correlationKey)
-            .variables(variables)
-            .send()
+        businessProcess.publishSomeBusinessMessage(correlationKey, businessData)
+    }
+
+    @PostMapping("/message/another-business-message/{correlationKey}")
+    fun publishAnotherBusinessMessage(
+        @PathVariable correlationKey: String,
+        @RequestBody businessData: String
+    ) {
+        LOG.info(
+            "Publishing another business message with correlation key `$correlationKey` and data: $businessData"
+        )
+        businessProcess.publishAnotherBusinessMessage(correlationKey, businessData)
     }
 
     companion object {

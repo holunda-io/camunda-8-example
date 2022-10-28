@@ -11,7 +11,7 @@ class SomeBusinessStuffWorker(private val someBusinessService: SomeBusinessServi
     @JobWorker(type = "someBusinessStuff")
     fun doSomeBusinessStuff(@VariablesAsType variables: InputVariables): OutputVariables {
         LOG.info("Invoking businessService with variables: $variables")
-        val result = someBusinessService.myOperation(variables.businessKey)
+        val result = someBusinessService.myOperation()
         return OutputVariables(result)
     }
 
@@ -20,7 +20,7 @@ class SomeBusinessStuffWorker(private val someBusinessService: SomeBusinessServi
     }
 
     data class InputVariables (
-        val businessKey: String? = null
+        val businessKey: String
     )
 
     data class OutputVariables (

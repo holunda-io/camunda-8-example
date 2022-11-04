@@ -2,6 +2,8 @@ package org.example.camunda.process.solution
 
 import de.holundaio.camunda8template.Camunda8TemplateApplication
 import de.holundaio.camunda8template.facade.ProcessController
+import de.holundaio.camunda8template.process.BusinessProcess.FlowNodes.END_MESSAGE_A_PROCESSED
+import de.holundaio.camunda8template.process.BusinessProcess.FlowNodes.MESSAGE_CATCH_MESSAGE_A
 import de.holundaio.camunda8template.process.BusinessProcess.FlowNodes.TASK_DO_SOME_BUSINESS_STUFF
 import de.holundaio.camunda8template.process.BusinessProcess.ProcessVariables
 import de.holundaio.camunda8template.service.SomeBusinessService
@@ -11,7 +13,6 @@ import io.camunda.zeebe.process.test.inspections.InspectionUtility
 import io.camunda.zeebe.spring.test.ZeebeSpringTest
 import io.camunda.zeebe.spring.test.ZeebeTestThreadSupport
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -37,10 +38,10 @@ class ProcessUnitTest {
     @Throws(Exception::class)
     fun testHappyPath() {
         // define mock behavior
-        Mockito.`when`(someBusinessService!!.myOperation(ArgumentMatchers.anyString())).thenReturn(true)
+        Mockito.`when`(someBusinessService!!.myOperation()).thenReturn(true)
 
         // start a process instance
-        processController.startProcessInstance("23")
+        processController.startBusinessProcessInstance("23")
 
         // wait for process to be started
         engine.waitForIdleState(Duration.ofSeconds(1))
@@ -49,14 +50,23 @@ class ProcessUnitTest {
 
         // check that service task has been completed
         ZeebeTestThreadSupport.waitForProcessInstanceHasPassedElement(processInstance, TASK_DO_SOME_BUSINESS_STUFF)
-        Mockito.verify(someBusinessService).myOperation("23")
+        Mockito.verify(someBusinessService).myOperation()
+
+        // correlate message
+        processController.publishSomeBusinessMessage("23", "important data")
 
         // check that process is ended with the right result
         ZeebeTestThreadSupport.waitForProcessInstanceCompleted(processInstance)
         BpmnAssert.assertThat(processInstance)
             .isCompleted
-            .hasPassedElement(TASK_DO_SOME_BUSINESS_STUFF)
+            .hasPassedElementsInOrder(
+                TASK_DO_SOME_BUSINESS_STUFF,
+                MESSAGE_CATCH_MESSAGE_A,
+                END_MESSAGE_A_PROCESSED
+            )
+            .hasVariableWithValue(ProcessVariables::businessKey.name, "23")
             .hasVariableWithValue(ProcessVariables::jobResult.name, true)
+            .hasVariableWithValue(ProcessVariables::businessData.name, "important data")
 
         // ensure no other side effects
         Mockito.verifyNoMoreInteractions(someBusinessService)

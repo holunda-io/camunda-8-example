@@ -1,5 +1,8 @@
 package de.holundaio.camunda8template.process
 
+import de.holundaio.camunda8template.process.message.Message
+import de.holundaio.camunda8template.process.message.MessageA
+import de.holundaio.camunda8template.process.message.MessageB
 import io.camunda.zeebe.client.ZeebeClient
 import org.springframework.stereotype.Component
 import java.util.concurrent.CompletableFuture
@@ -13,11 +16,10 @@ class BusinessProcess(private val zeebe: ZeebeClient) {
 
     object FlowNodes {
         const val TASK_DO_SOME_BUSINESS_STUFF = "Task_DoSomeBusinessStuff"
-    }
-
-    object Messages {
-        const val MESSAGE_A = "Message_A"
-        const val MESSAGE_B = "Message_B"
+        const val MESSAGE_CATCH_MESSAGE_A = "MessageCatch_A"
+        const val MESSAGE_CATCH_MESSAGE_B = "MessageCatch_B"
+        const val END_MESSAGE_A_PROCESSED = "End_Message_A_processed"
+        const val END_MESSAGE_B_PROCESSED = "End_Message_B_processed"
     }
 
     fun start(businessKey: String): CompletableFuture<BusinessProcessInstance> {
@@ -31,19 +33,19 @@ class BusinessProcess(private val zeebe: ZeebeClient) {
     }
 
     fun publishSomeBusinessMessage(businessKey: String, businessData: String) {
-        publishMessage(Messages.MESSAGE_A, businessKey, ProcessVariables(businessKey, businessData = businessData))
+        publishMessage(MessageA(businessKey, MessageA.Variables(businessData)))
     }
 
-    fun publishAnotherBusinessMessage(businessKey: String, otherData: String) {
-        publishMessage(Messages.MESSAGE_B, businessKey, ProcessVariables(businessKey, moreData = otherData))
+    fun publishAnotherBusinessMessage(businessKey: String, moreData: String) {
+        publishMessage(MessageB(businessKey, MessageB.Variables(moreData)))
     }
 
-    private fun publishMessage(messageName: String, correlationKey: String, variables: ProcessVariables) {
+    private fun publishMessage(message: Message) {
         zeebe
             .newPublishMessageCommand()
-            .messageName(messageName)
-            .correlationKey(correlationKey)
-            .variables(variables)
+            .messageName(message.name)
+            .correlationKey(message.correlationKey)
+            .variables(message.variables)
             .send()
     }
 

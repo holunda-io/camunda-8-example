@@ -19,9 +19,9 @@ class SomeBusinessStuffWorker(private val someBusinessService: SomeBusinessServi
         private val LOG = LoggerFactory.getLogger(SomeBusinessStuffWorker::class.java)
     }
 
-    data class InputVariables (
-        val businessKey: String
-    )
+    class InputVariables {
+        var businessKey: String? = null
+    }
 
     data class OutputVariables (
         val result: Boolean

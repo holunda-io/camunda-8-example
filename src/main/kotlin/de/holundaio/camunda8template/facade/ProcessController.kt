@@ -17,26 +17,26 @@ class ProcessController(private val businessProcess: BusinessProcess) {
         businessProcess.start(businessKey)
     }
 
-    @PostMapping("/message/some-business-message/{correlationKey}")
-    fun publishSomeBusinessMessage(
-        @PathVariable correlationKey: String,
+    @PostMapping("/message/some-business-message/{someBusinessKey}")
+    fun someBusinessMessage(
+        @PathVariable someBusinessKey: String,
         @RequestBody businessData: String
     ) {
         LOG.info(
-            "Publishing some business message with correlation key `$correlationKey` and data: $businessData"
+            "Publishing some business message with correlation key `$someBusinessKey` and data: $businessData"
         )
-        businessProcess.publishSomeBusinessMessage(correlationKey, businessData)
+        businessProcess.correlateSomeBusinessMessage(someBusinessKey, businessData)
     }
 
-    @PostMapping("/message/another-business-message/{correlationKey}")
-    fun publishAnotherBusinessMessage(
-        @PathVariable correlationKey: String,
+    @PostMapping("/message/another-business-message/{anotherBusinessKey}")
+    fun correlateAnotherBusinessMessage(
+        @PathVariable anotherBusinessKey: String,
         @RequestBody businessData: String
     ) {
         LOG.info(
-            "Publishing another business message with correlation key `$correlationKey` and data: $businessData"
+            "Publishing another business message with correlation key `$anotherBusinessKey` and data: $businessData"
         )
-        businessProcess.publishAnotherBusinessMessage(correlationKey, businessData)
+        businessProcess.correlateAnotherBusinessMessage(anotherBusinessKey, businessData)
     }
 
     companion object {

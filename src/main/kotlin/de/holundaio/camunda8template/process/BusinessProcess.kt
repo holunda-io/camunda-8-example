@@ -32,15 +32,15 @@ class BusinessProcess(private val zeebe: ZeebeClient) {
         return CompletableFuture.supplyAsync { BusinessProcessInstance(zeebeFuture.join().processInstanceKey) }
     }
 
-    fun publishSomeBusinessMessage(businessKey: String, businessData: String) {
-        publishMessage(MessageA(businessKey, MessageA.Variables(businessData)))
+    fun correlateSomeBusinessMessage(businessKey: String, businessData: String) {
+        correlateMessage(MessageA(businessKey, MessageA.Variables(businessData)))
     }
 
-    fun publishAnotherBusinessMessage(businessKey: String, moreData: String) {
-        publishMessage(MessageB(businessKey, MessageB.Variables(moreData)))
+    fun correlateAnotherBusinessMessage(businessKey: String, moreData: String) {
+        correlateMessage(MessageB(businessKey, MessageB.Variables(moreData)))
     }
 
-    private fun publishMessage(message: Message) {
+    private fun correlateMessage(message: Message) {
         zeebe
             .newPublishMessageCommand()
             .messageName(message.name)

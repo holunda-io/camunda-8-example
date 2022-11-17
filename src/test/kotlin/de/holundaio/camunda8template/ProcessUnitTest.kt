@@ -38,7 +38,7 @@ class ProcessUnitTest {
     @Throws(Exception::class)
     fun testHappyPath() {
         // define mock behavior
-        Mockito.`when`(someBusinessService!!.myOperation()).thenReturn(true)
+        Mockito.`when`(someBusinessService!!.myOperation(variables.businessKey)).thenReturn(true)
 
         // start a process instance
         processController.startBusinessProcessInstance("23")
@@ -50,7 +50,7 @@ class ProcessUnitTest {
 
         // check that service task has been completed
         ZeebeTestThreadSupport.waitForProcessInstanceHasPassedElement(processInstance, TASK_DO_SOME_BUSINESS_STUFF)
-        Mockito.verify(someBusinessService).myOperation()
+        Mockito.verify(someBusinessService).myOperation(variables.businessKey)
 
         // correlate message
         processController.publishSomeBusinessMessage("23", "important data")

@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class SomeBusinessService {
-    fun myOperation(): Boolean {
+    fun myOperation(businessKey: String?): Boolean {
         return true
     }
 }

@@ -37,11 +37,12 @@ class ProcessUnitTest {
     @Test
     @Throws(Exception::class)
     fun testHappyPath() {
+        val givenBusinessKey = "23"
         // define mock behavior
-        Mockito.`when`(someBusinessService!!.myOperation(variables.businessKey)).thenReturn(true)
+        Mockito.`when`(someBusinessService!!.myOperation(givenBusinessKey)).thenReturn(true)
 
         // start a process instance
-        processController.startBusinessProcessInstance("23")
+        processController.startBusinessProcessInstance(givenBusinessKey)
 
         // wait for process to be started
         engine.waitForIdleState(Duration.ofSeconds(1))
@@ -50,10 +51,10 @@ class ProcessUnitTest {
 
         // check that service task has been completed
         ZeebeTestThreadSupport.waitForProcessInstanceHasPassedElement(processInstance, TASK_DO_SOME_BUSINESS_STUFF)
-        Mockito.verify(someBusinessService).myOperation(variables.businessKey)
+        Mockito.verify(someBusinessService).myOperation(givenBusinessKey)
 
         // correlate message
-        processController.publishSomeBusinessMessage("23", "important data")
+        processController.someBusinessMessage(givenBusinessKey, "important data")
 
         // check that process is ended with the right result
         ZeebeTestThreadSupport.waitForProcessInstanceCompleted(processInstance)
@@ -64,7 +65,7 @@ class ProcessUnitTest {
                 MESSAGE_CATCH_MESSAGE_A,
                 END_MESSAGE_A_PROCESSED
             )
-            .hasVariableWithValue(ProcessVariables::businessKey.name, "23")
+            .hasVariableWithValue(ProcessVariables::businessKey.name, givenBusinessKey)
             .hasVariableWithValue(ProcessVariables::jobResult.name, true)
             .hasVariableWithValue(ProcessVariables::businessData.name, "important data")
 

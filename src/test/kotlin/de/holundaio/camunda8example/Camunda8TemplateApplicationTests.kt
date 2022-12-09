@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
 @ZeebeSpringTest
-class Camunda8TemplateApplicationTests {
+class Camunda8ExampleApplicationTests {
 
 	@Test
 	fun contextLoads() {

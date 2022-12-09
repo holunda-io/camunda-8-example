@@ -1,1 +1,1 @@
-rootProject.name = "camunda-8-template"
+rootProject.name = "camunda-8-example"

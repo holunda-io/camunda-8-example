@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class SomeBusinessStuffWorker(private val someBusinessService: SomeBusinessService) {
-    @JobWorker(type = "someBusinessStuff", )
+    @JobWorker(type = "someBusinessStuff")
     fun doSomeBusinessStuff(@VariablesAsType variables: InputVariables): OutputVariables {
         LOG.info("Invoking businessService with variables: $variables")
 

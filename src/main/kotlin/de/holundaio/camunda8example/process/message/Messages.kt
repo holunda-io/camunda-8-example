@@ -1,4 +1,4 @@
-package de.holundaio.camunda8template.process.message
+package de.holundaio.camunda8example.process.message
 
 abstract class Message(
     val name: String,

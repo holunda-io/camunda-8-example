@@ -1,12 +1,12 @@
 package org.example.camunda.process.solution
 
-import de.holundaio.camunda8template.Camunda8TemplateApplication
-import de.holundaio.camunda8template.facade.ProcessController
-import de.holundaio.camunda8template.process.BusinessProcess.FlowNodes.END_MESSAGE_A_PROCESSED
-import de.holundaio.camunda8template.process.BusinessProcess.FlowNodes.MESSAGE_CATCH_MESSAGE_A
-import de.holundaio.camunda8template.process.BusinessProcess.FlowNodes.TASK_DO_SOME_BUSINESS_STUFF
-import de.holundaio.camunda8template.process.BusinessProcess.ProcessVariables
-import de.holundaio.camunda8template.service.SomeBusinessService
+import de.holundaio.camunda8example.Camunda8ExampleApplication
+import de.holundaio.camunda8example.facade.BusinessProcessController
+import de.holundaio.camunda8example.process.BusinessProcess.FlowNodes.END_MESSAGE_A_PROCESSED
+import de.holundaio.camunda8example.process.BusinessProcess.FlowNodes.MESSAGE_CATCH_MESSAGE_A
+import de.holundaio.camunda8example.process.BusinessProcess.FlowNodes.TASK_DO_SOME_BUSINESS_STUFF
+import de.holundaio.camunda8example.process.BusinessProcess.ProcessVariables
+import de.holundaio.camunda8example.service.SomeBusinessService
 import io.camunda.zeebe.process.test.api.ZeebeTestEngine
 import io.camunda.zeebe.process.test.assertions.BpmnAssert
 import io.camunda.zeebe.process.test.inspections.InspectionUtility
@@ -20,20 +20,21 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import java.time.Duration
 
 /**
- * @see https://docs.camunda.io/docs/components/best-practices/development/testing-process-definitions/.writing-process-tests-in-java
+ * @see https://docs.camunda.io/docs/components/best-practices/development/testing-process-definitions/#writing-process-tests-in-java
  */
-@SpringBootTest(classes = [Camunda8TemplateApplication::class]) // will deploy BPMN & DMN models
+@SpringBootTest(classes = [Camunda8ExampleApplication::class]) // will deploy BPMN & DMN models
 @ZeebeSpringTest
 class ProcessUnitTest {
 
     @Autowired
-    private lateinit var processController: ProcessController
+    private lateinit var businessProcessController: BusinessProcessController
 
     @Autowired
     private lateinit var engine: ZeebeTestEngine
 
     @MockBean
     private val someBusinessService: SomeBusinessService? = null
+
     @Test
     @Throws(Exception::class)
     fun testHappyPath() {
@@ -42,7 +43,7 @@ class ProcessUnitTest {
         Mockito.`when`(someBusinessService!!.myOperation(givenBusinessKey)).thenReturn(true)
 
         // start a process instance
-        processController.startBusinessProcessInstance(givenBusinessKey)
+        businessProcessController.startBusinessProcessInstance(givenBusinessKey)
 
         // wait for process to be started
         engine.waitForIdleState(Duration.ofSeconds(1))
@@ -54,7 +55,7 @@ class ProcessUnitTest {
         Mockito.verify(someBusinessService).myOperation(givenBusinessKey)
 
         // correlate message
-        processController.someBusinessMessage(givenBusinessKey, "important data")
+        businessProcessController.someBusinessMessage(givenBusinessKey, "important data")
 
         // check that process is ended with the right result
         ZeebeTestThreadSupport.waitForProcessInstanceCompleted(processInstance)

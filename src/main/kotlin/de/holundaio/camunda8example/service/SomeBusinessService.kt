@@ -1,4 +1,4 @@
-package de.holundaio.camunda8template.service
+package de.holundaio.camunda8example.service
 
 import org.springframework.stereotype.Service
 

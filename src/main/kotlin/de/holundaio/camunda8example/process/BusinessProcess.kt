@@ -1,8 +1,8 @@
-package de.holundaio.camunda8template.process
+package de.holundaio.camunda8example.process
 
-import de.holundaio.camunda8template.process.message.Message
-import de.holundaio.camunda8template.process.message.MessageA
-import de.holundaio.camunda8template.process.message.MessageB
+import de.holundaio.camunda8example.process.message.Message
+import de.holundaio.camunda8example.process.message.MessageA
+import de.holundaio.camunda8example.process.message.MessageB
 import io.camunda.zeebe.client.ZeebeClient
 import org.springframework.stereotype.Component
 import java.util.concurrent.CompletableFuture

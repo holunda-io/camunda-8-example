@@ -1,4 +1,4 @@
-package de.holundaio.camunda8template
+package de.holundaio.camunda8example
 
 import io.camunda.zeebe.spring.test.ZeebeSpringTest
 import org.junit.jupiter.api.Test

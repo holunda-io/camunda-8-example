@@ -1,6 +1,6 @@
-package de.holundaio.camunda8template.worker
+package de.holundaio.camunda8example.process.worker
 
-import de.holundaio.camunda8template.service.SomeBusinessService
+import de.holundaio.camunda8example.service.SomeBusinessService
 import io.camunda.zeebe.spring.client.annotation.JobWorker
 import io.camunda.zeebe.spring.client.annotation.VariablesAsType
 import org.slf4j.LoggerFactory
@@ -8,10 +8,12 @@ import org.springframework.stereotype.Component
 
 @Component
 class SomeBusinessStuffWorker(private val someBusinessService: SomeBusinessService) {
-    @JobWorker(type = "someBusinessStuff")
+    @JobWorker(type = "someBusinessStuff", )
     fun doSomeBusinessStuff(@VariablesAsType variables: InputVariables): OutputVariables {
         LOG.info("Invoking businessService with variables: $variables")
+
         val result = someBusinessService.myOperation(variables.businessKey)
+
         return OutputVariables(result)
     }
 

@@ -1,13 +1,13 @@
-package de.holundaio.camunda8template.facade
+package de.holundaio.camunda8example.facade
 
-import de.holundaio.camunda8template.process.BusinessProcess
-import de.holundaio.camunda8template.process.BusinessProcess.Companion.BPMN_PROCESS_ID
+import de.holundaio.camunda8example.process.BusinessProcess
+import de.holundaio.camunda8example.process.BusinessProcess.Companion.BPMN_PROCESS_ID
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/business-process")
-class ProcessController(private val businessProcess: BusinessProcess) {
+class BusinessProcessController(private val businessProcess: BusinessProcess) {
 
     @PostMapping("/start")
     fun startBusinessProcessInstance(@RequestBody businessKey: String) {
@@ -40,6 +40,6 @@ class ProcessController(private val businessProcess: BusinessProcess) {
     }
 
     companion object {
-        private val LOG = LoggerFactory.getLogger(ProcessController::class.java)
+        private val LOG = LoggerFactory.getLogger(BusinessProcessController::class.java)
     }
 }

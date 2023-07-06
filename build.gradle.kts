@@ -12,7 +12,7 @@ version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 // dependency versions
-val springZeebeVersion = "8.1.1"
+val springZeebeVersion = "8.2.2"
 
 repositories {
 	mavenCentral()
